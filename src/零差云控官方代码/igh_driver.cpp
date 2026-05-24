@@ -448,7 +448,7 @@ int main(int argc, char **argv)
 
 	/***************************************************/
 
-	if (ecrt_slave_config_pdos(drive0, EC_END, slave_0_syncs)) // 配置PDO映射
+	if (ecrt_slave_config_pdos(drive0, EC_END, slave_0_syncs))
 	{
 		printf("Failed to configure slave 0 PDOs\n");
 		return -1;
