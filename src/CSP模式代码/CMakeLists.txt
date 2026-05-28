@@ -21,11 +21,11 @@ add_executable(
   src/igh_driver.cpp)
   
 target_include_directories(
-  igh_driver
+  CSP_Mode
   PRIVATE
   ${ETHERLAB_DIR}/include
 )
-target_link_libraries(igh_driver ${ETHERCAT_LIB})
+target_link_libraries(CSP_Mode ${ETHERCAT_LIB})
 
 
 

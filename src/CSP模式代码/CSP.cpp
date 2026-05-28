@@ -420,7 +420,7 @@ int main(int argc, char **argv)
 		ecrt_master_send(master);
 	}
 
-	int32_t actPos0, targetPos0 = 0;
+	int32_t actPos0, targetPos0;
 	int32_t actVel0, targetVel0;
 #ifdef MEASURE_PERF
 	/* The slave time received in the current and the previous cycle */
@@ -438,6 +438,8 @@ int main(int argc, char **argv)
 	/* Update wakeupTime = current time */
 	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 
+	actPos0 = EC_READ_S32(domain1_pd + actual_position); // 读取实际位置
+	targetPos0 = actPos0;				     // 设置目标位置 0x607A 等于当前实际位置值
 	while (1)
 	{
 #ifdef MEASURE_TIMING
@@ -480,7 +482,7 @@ int main(int argc, char **argv)
 		// Read status word
 		uint16_t statusWord = EC_READ_U16(domain1_pd + statusword);
 		uint16_t state = getDriveState(statusWord);
-		uint16_t cw = 0; // 将变量声明移到switch语句之前
+		uint16_t cw = 0;
 
 		// State machine for enabling the drive
 		switch (state)
@@ -502,18 +504,13 @@ int main(int argc, char **argv)
 
 		case STATE_SWITCHED_ON:
 			cw = CONTROL_WORD_ENABLE_OPERATION;
+			EC_WRITE_S32(domain1_pd + target_position, targetPos0);
 			printf("Switched on, sending enable operation command\n");
 			break;
 
 		case STATE_OPERATION_ENABLED:
-			// CSP mode operation
-			actVel0 = EC_READ_S32(domain1_pd + actual_position);
-
-			// Set constant target position
-			EC_WRITE_S32(domain1_pd + target_position, targetPos0);
-
-			// Keep operation enabled
 			cw = CONTROL_WORD_ENABLE_OPERATION;
+			printf("Operating...\n");
 			break;
 
 		default:
@@ -524,15 +521,13 @@ int main(int argc, char **argv)
 
 		// Write control word after switch statement
 		EC_WRITE_U16(domain1_pd + controlword, cw);
-
-		if (targetPos0 != 131071)
+		// Periodic sending of target location
+		if (state == STATE_OPERATION_ENABLED)
 		{
-			targetPos0 += 1;
-			printf("targetPos=%d actualPos=%d\n", targetPos0, actPos0);
+			targetPos0 += 10;
+			EC_WRITE_S32(domain1_pd + target_position, targetPos0);
 		}
-		else
-			targetPos0 = 131071;
-		/********************************************************************************/
+		printf("targetPos=%d actualPos=%d\n", targetPos0, actPos0);
 
 		/* Queues all domain datagrams in the master's datagram queue.
 		   Call this function to mark the domain's datagrams for exchanging at the
