@@ -18,7 +18,7 @@ include_directories(
 
 add_executable(
   CSP_Mode
-  src/igh_driver.cpp)
+  src/CSP.cpp)
   
 target_include_directories(
   CSP_Mode

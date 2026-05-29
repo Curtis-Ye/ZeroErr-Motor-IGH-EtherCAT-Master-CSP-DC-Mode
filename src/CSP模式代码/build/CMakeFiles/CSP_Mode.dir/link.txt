@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/CSP_Mode.dir/src/CSP.cpp.o -o CSP_Mode  -Wl,-rpath,/usr/local/etherlab/lib /usr/local/etherlab/lib/libethercat.so
