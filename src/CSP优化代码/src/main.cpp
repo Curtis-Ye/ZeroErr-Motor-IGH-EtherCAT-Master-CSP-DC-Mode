@@ -1,21 +1,19 @@
 /* ============================================================
  * main.cpp — EtherCAT 通用主站模板入口
  *
- * 编译配置 flag:
- *   CONFIG_PDOS    - 使能 PDO 配置
- *   DC             - 使能分布式时钟
+ * 核心配置 flag (在 include/csp_config.h 中定义):
+ *   CONFIG_PDOS - 使能 PDO 配置
+ *   DC          - 使能分布式时钟
  *
  * 调试 flag (按需取消注释):
- *   MEASURE_PERF   - 测量参考从站时钟时间戳差值
- *   MEASURE_TIMING - 测量循环执行时间
+ *   MEASURE_PERF    - 测量参考从站时钟时间戳差值
+ *   MEASURE_TIMING  - 测量循环执行时间
  *   SET_CPU_AFFINITY - 绑定 CPU 核心
  *
  * 更换控制模式: 替换 csp_control 模块即可
  * ============================================================ */
 
-/* --- 编译配置 (用户可修改) --- */
-#define CONFIG_PDOS
-#define DC
+/* --- 调试开关 (按需启用) --- */
 /* #define MEASURE_PERF */
 /* #define MEASURE_TIMING */
 /* #define SET_CPU_AFFINITY */
