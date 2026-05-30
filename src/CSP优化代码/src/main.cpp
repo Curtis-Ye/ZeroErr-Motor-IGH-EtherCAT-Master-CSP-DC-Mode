@@ -84,10 +84,11 @@ int main(int argc, char **argv)
     if (!domain_pd)
         return -1;
 
+    struct timespec cycleTime = {0, PERIOD_NS};
+
     /* ---- 3. 等待所有从站进入 OP 状态 ---- */
     {
         struct timespec wakeupTime;
-        struct timespec cycleTime  = {0, PERIOD_NS};
         clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 
         ec_slave_config_state_t slaveState;
