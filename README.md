@@ -29,27 +29,61 @@
 ```
 .
 ├── README.md
-├── src/
-│   └── 零差云控官方代码/
-│       ├── igh_driver.cpp          # 官方 CSV 模式示例代码
-│       ├── CMakeLists.txt          # CMake 构建文件
-│       └── 例程解读/               # 代码逐行解析文档
-│           ├── 头文件解析.md        # 11 个头文件逐一分析
-│           ├── 预定义标识符解析.md   # 宏定义与条件编译说明
-│           ├── 功能函数解析.md      # ODwrite / initDrive / timespec 等函数解析
-│           ├── 控制字与状态字解析.md # CiA402 状态机与控制字说明
-│           ├── 主函数解析1.md       # CPU 亲和性、实时调度、内存锁定
-│           ├── 主函数解析2.md       # 主站请求、从站配置、PDO 映射
-│           ├── 主函数解析3.md       # Domain 配置、DC 时钟初始化
-│           ├── 主函数解析4.md       # 第一个 while(1)：启动至 OP 状态
-│           ├── 主函数解析5.md       # 第二个 while(1)：主控制循环
-│           └── CMake文件解析.md     # CMakeLists.txt 逐行解释
-└── files/
-    ├── DC时钟.md                   # 分布式时钟原理讲解
-    ├── CPU亲和性.md                # CPU 亲和性与实时调度笔记
-    ├── IGH安装.md                  # IGH EtherCAT Master 安装教程
-    └── ecrt.h相关函数.md            # ecrt.h头文件相关函数介绍
+├── files/                              # 参考文档与笔记
+│   ├── CPU亲和性.md                    # CPU 亲和性与实时调度笔记
+│   ├── DC时钟.md                       # 分布式时钟原理讲解
+│   ├── ecrt.h相关函数.md               # ecrt.h 头文件相关函数介绍
+│   └── IGH安装.md                      # IGH EtherCAT Master 安装教程
+└── src/
+    ├── 零差云控官方代码CSV/             # 官方 CSV 模式示例代码（基准）
+    │   ├── igh_driver.cpp              # 官方 CSV 模式示例代码
+    │   ├── CMakeLists.txt              # CMake 构建文件
+    │   └── 例程解读/                   # 代码逐行解析文档
+    │       ├── 头文件解析.md            # 11 个头文件逐一分析
+    │       ├── 预定义标识符解析.md       # 宏定义与条件编译说明
+    │       ├── 功能函数解析.md          # ODwrite / initDrive / timespec 等函数解析
+    │       ├── 控制字与状态字解析.md     # CiA402 状态机与控制字说明
+    │       ├── 主函数解析1.md           # CPU 亲和性、实时调度、内存锁定
+    │       ├── 主函数解析2.md           # 主站请求、从站配置、PDO 映射
+    │       ├── 主函数解析3.md           # Domain 配置、DC 时钟初始化
+    │       ├── 主函数解析4.md           # 第一个 while(1)：启动至 OP 状态
+    │       ├── 主函数解析5.md           # 第二个 while(1)：主控制循环
+    │       └── CMake文件解析.md         # CMakeLists.txt 逐行解释
+    ├── CSP模式代码/                     # 初步 CSP 模式实现（单文件）
+    │   ├── CMakeLists.txt
+    │   ├── CSP模式相关说明.md           # CSP 模式相关说明文档
+    │   └── src/
+    │       └── CSP.cpp                 # CSP 模式核心代码（单文件版）
+    └── CSP优化代码/                     # CSP 模块化优化实现（当前主力）
+        ├── CMakeLists.txt              # CMake 构建配置
+        ├── README.md                   # 模块详细文档
+        ├── include/                    # 头文件
+        │   ├── csp_config.h            # 编译常量、宏、全局声明
+        │   ├── csp_control.h           # CSP 模式驱动控制声明
+        │   ├── csp_util.h              # 时间运算 & 系统工具声明
+        │   ├── ecat_config.h           # 从站硬件配置声明 (PDO/同步/域)
+        │   └── ecat_master.h           # 主站操作声明 (初始化/DC/收发)
+        └── src/                        # 源文件
+            ├── main.cpp                # 主入口 —— 组装各模块
+            ├── csp_control.cpp         # 驱动状态机 & CSP 控制逻辑
+            ├── csp_util.cpp            # 时间/CPU/内存/信号实现
+            ├── ecat_config.cpp         # PDO 映射 & 域注册数据定义
+            └── ecat_master.cpp         # 主站初始化/DC 配置/收发封装
 ```
+
+### 代码演进路径
+
+```
+零差云控官方代码CSV          CSP模式代码               CSP优化代码
+(CSV + 代码解析)     →      (CSP 单文件原型)    →     (CSP 模块化 + 通用框架)
+  分析 & 理解                 模式验证                  架构化 & 可复用
+```
+
+| 目录 | 阶段 | 说明 |
+|------|------|------|
+| `零差云控官方代码CSV/` | **分析阶段** | 官方 CSV 模式代码 + 逐行解析文档，作为项目基础 |
+| `CSP模式代码/` | **原型阶段** | 将 CSV 改造为 CSP 模式的单文件实现，验证 DC 时钟同步 |
+| `CSP优化代码/` | **优化阶段** | 模块化重构，通用层/应用层分离，支持多种 CiA 402 模式切换 |
 
 ## 关键技术概念
 
@@ -103,8 +137,26 @@ sudo /etc/init.d/ethercat start
 
 ### 3. 编译项目
 
+**CSP优化代码（推荐，模块化版本）：**
+
 ```bash
-cd src/零差云控官方代码
+cd src/CSP优化代码/build
+cmake ..
+make -j$(nproc)
+```
+
+**CSP模式代码（单文件原型）：**
+
+```bash
+cd src/CSP模式代码/build
+cmake ..
+make -j$(nproc)
+```
+
+**官方CSV代码（参考基准）：**
+
+```bash
+cd src/零差云控官方代码CSV
 mkdir build && cd build
 cmake ..
 make
@@ -113,6 +165,10 @@ make
 ### 4. 运行
 
 ```bash
+# CSP优化代码
+sudo ./CSP_PROJECT
+
+# 官方代码
 sudo ./igh_driver
 ```
 

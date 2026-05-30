@@ -18,7 +18,7 @@ void ODwrite(ec_master_t *master,
              uint8_t objectValue)
 {
     uint8_t retVal = ecrt_master_sdo_download(master, slavePos,
-        index, subIndex, &objectValue, sizeof(objectValue), NULL);
+                                              index, subIndex, &objectValue, sizeof(objectValue), NULL);
     if (retVal)
         printf("OD write unsuccessful\n");
 }
@@ -40,7 +40,8 @@ uint16_t driveStateMachine(uint16_t statusWord,
     uint16_t state = getDriveState(statusWord);
     uint16_t cw = 0;
 
-    switch (state) {
+    switch (state)
+    {
     case STATE_FAULT:
         cw = CONTROL_WORD_FAULT_RESET;
         printf("Fault state, sending reset command\n");
@@ -77,7 +78,8 @@ uint16_t driveStateMachine(uint16_t statusWord,
     EC_WRITE_U16(domain_pd + offset_cw, cw);
 
     /* 在 Operation Enabled 状态下周期更新目标位置 */
-    if (state == STATE_OPERATION_ENABLED) {
+    if (state == STATE_OPERATION_ENABLED)
+    {
         *targetPos += 10;
         EC_WRITE_S32(domain_pd + offset_target, *targetPos);
     }
