@@ -26,14 +26,14 @@ extern ec_pdo_info_t slave_0_pdos[];
 extern ec_sync_info_t slave_0_syncs[];
 
 /* --- 域注册：PDO 偏移变量 --- */
-extern unsigned int offset_controlword;
-extern unsigned int offset_statusword;
-extern unsigned int offset_target_position;
-extern unsigned int offset_actual_position;
-extern unsigned int offset_target_velocity;
-extern unsigned int offset_actual_velocity;
-extern unsigned int offset_target_torque;
-extern unsigned int offset_actual_torque;
+extern uint offset_controlword;
+extern uint offset_statusword;
+extern uint offset_target_position;
+extern uint offset_actual_position;
+extern uint offset_target_velocity;
+extern uint offset_actual_velocity;
+extern uint offset_target_torque;
+extern uint offset_actual_torque;
 
 /* --- 域注册表 --- */
 extern ec_pdo_entry_reg_t domain1_regs[];

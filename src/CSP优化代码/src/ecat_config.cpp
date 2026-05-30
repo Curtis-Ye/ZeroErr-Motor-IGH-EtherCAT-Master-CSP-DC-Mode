@@ -43,25 +43,25 @@ ec_sync_info_t slave_0_syncs[] = {
 };
 
 /* --- PDO 偏移变量（域注册后填充）--- */
-unsigned int offset_controlword;
-unsigned int offset_statusword;
-unsigned int offset_target_position;
-unsigned int offset_actual_position;
-unsigned int offset_target_velocity;
-unsigned int offset_actual_velocity;
-unsigned int offset_target_torque;
-unsigned int offset_actual_torque;
+uint offset_controlword;
+uint offset_statusword;
+uint offset_target_position;
+uint offset_actual_position;
+uint offset_target_velocity;
+uint offset_actual_velocity;
+uint offset_target_torque;
+uint offset_actual_torque;
 
 /* --- 域注册表（将对象字典映射到偏移变量）--- */
 ec_pdo_entry_reg_t domain1_regs[] = {
-    {0, 0, 0x5a65726f, 0x00029252, 0x6040, 0x00, &offset_controlword},
-    {0, 0, 0x5a65726f, 0x00029252, 0x607a, 0x00, &offset_target_position},
-    {0, 0, 0x5a65726f, 0x00029252, 0x60FF, 0x00, &offset_target_velocity},
-    {0, 0, 0x5a65726f, 0x00029252, 0x6071, 0x00, &offset_target_torque},
-    {0, 0, 0x5a65726f, 0x00029252, 0x6041, 0x00, &offset_statusword},
-    {0, 0, 0x5a65726f, 0x00029252, 0x6064, 0x00, &offset_actual_position},
-    {0, 0, 0x5a65726f, 0x00029252, 0x606c, 0x00, &offset_actual_velocity},
-    {0, 0, 0x5a65726f, 0x00029252, 0x6077, 0x00, &offset_actual_torque},
+    {0, 0, vendor_id, product_code, 0x6040, 0x00, &offset_controlword},
+    {0, 0, vendor_id, product_code, 0x607a, 0x00, &offset_target_position},
+    {0, 0, vendor_id, product_code, 0x60FF, 0x00, &offset_target_velocity},
+    {0, 0, vendor_id, product_code, 0x6071, 0x00, &offset_target_torque},
+    {0, 0, vendor_id, product_code, 0x6041, 0x00, &offset_statusword},
+    {0, 0, vendor_id, product_code, 0x6064, 0x00, &offset_actual_position},
+    {0, 0, vendor_id, product_code, 0x606c, 0x00, &offset_actual_velocity},
+    {0, 0, vendor_id, product_code, 0x6077, 0x00, &offset_actual_torque},
     {}  /* 终止 */
 };
 
